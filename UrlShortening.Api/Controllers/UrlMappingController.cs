@@ -34,5 +34,18 @@ namespace UrlShortening.Api.Controllers
                 code = result.Code
             }, result);
         }
+
+        [HttpGet("/redirect/{code}")]
+        public async Task<IActionResult> RedirectionByCode(string code)
+        {
+            var result = await _codeService.FindOneAsync(code);
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return Redirect(result.OriginalUrl);
+        }
     }
 }
