@@ -33,6 +33,28 @@ namespace UrlShortening.Api.Services
             };
         }
 
+        public async Task<CodeResponseDto?> ResolveAndUpdateDataAsync(string code, HttpContext httpContext)
+        {
+            var result = await _dbContext.UrlMappings.FirstOrDefaultAsync(data => data.Code == code);
+
+            if (result is null)
+            {
+                return null;
+            }
+
+            result.HitCount++;
+            result.LastAccessAt = DateTime.UtcNow;
+
+            await _dbContext.SaveChangesAsync();
+
+            return new CodeResponseDto
+            {
+                OriginalUrl = result.OriginalUrl,
+                Code = result.Code,
+                CreatedAt = result.CreatedAt
+            };
+        }
+
         public async Task<CodeResponseDto> CreateAsync(CreateCodeDto dto)
         {
             var code = await GenerateCodeAsync();
@@ -52,7 +74,7 @@ namespace UrlShortening.Api.Services
                 Code = model.Code,
                 CreatedAt = model.CreatedAt
             };
-        }
+        }        
         
         public async Task<CodeAnalyticsDto?> GetCodeAnalyticsAsync(string code)
         {

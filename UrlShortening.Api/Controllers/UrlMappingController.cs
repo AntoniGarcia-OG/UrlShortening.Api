@@ -24,6 +24,21 @@ namespace UrlShortening.Api.Controllers
             return Ok(result);
         }
 
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("/redirect/{code}")]
+        public async Task<IActionResult> RedirectionByCode(string code)
+        {
+            var result = await _codeService.ResolveAndUpdateDataAsync(code, HttpContext);
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
+            return Redirect(result.OriginalUrl);
+        }
+
         [HttpPost]
         public async Task<ActionResult<CodeResponseDto>> Create([FromBody] CreateCodeDto dto)
         {
