@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UrlShortening.Api.DTOs;
+using UrlShortening.Api.DTOs.Analytics;
 using UrlShortening.Api.Services;
 
 namespace UrlShortening.Api.Controllers
@@ -50,17 +51,17 @@ namespace UrlShortening.Api.Controllers
             }, result);
         }
 
-        [HttpGet("/redirect/{code}")]
-        public async Task<IActionResult> RedirectionByCode(string code)
+        [HttpGet("{code}/analytics")]
+        public async Task<ActionResult<CodeAnalyticsDto>> GetCodeAnalytics(string code)
         {
-            var result = await _codeService.FindOneAsync(code);
+            var result = await _codeService.GetCodeAnalyticsAsync(code);
 
             if (result is null)
             {
                 return NotFound();
             }
 
-            return Redirect(result.OriginalUrl);
+            return Ok(result);
         }
     }
 }
