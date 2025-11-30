@@ -1,4 +1,6 @@
 ﻿using UrlShortening.Api.DTOs;
+using UrlShortening.Api.DTOs.Analytics;
+using UrlShortening.Api.Models;
 
 namespace UrlShortening.Api.Services
 {
@@ -8,5 +10,7 @@ namespace UrlShortening.Api.Services
 
         Task<CodeResponseDto?> ResolveAndUpdateDataAsync(string code, HttpContext httpContext);
         Task<CodeResponseDto> CreateAsync(CreateCodeDto dto);
+
+        Task<CodeAnalyticsDto?> GetCodeAnalyticsAsync(string code);
     }
 }
