@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UrlShortening.Api.Data;
 using UrlShortening.Api.DTOs;
+using UrlShortening.Api.DTOs.Analytics;
 using UrlShortening.Api.Models;
 
 namespace UrlShortening.Api.Services
@@ -53,6 +54,23 @@ namespace UrlShortening.Api.Services
             };
         }
         
+        public async Task<CodeAnalyticsDto?> GetCodeAnalyticsAsync(string code)
+        {
+            var result = await _dbContext.UrlMappings.AsNoTracking().FirstOrDefaultAsync(data => data.Code == code);
+
+            if (result is null)
+            {
+                return null;
+            }
+
+            return new CodeAnalyticsDto
+            {
+                Code = result.Code,
+                HitCount = result.HitCount,
+                LastAccessAt = result.LastAccessAt
+            };
+        }
+
         private async Task<string> GenerateCodeAsync()
         {
             const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
